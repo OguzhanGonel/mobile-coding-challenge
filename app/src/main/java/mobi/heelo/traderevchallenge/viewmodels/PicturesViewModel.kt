@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -32,7 +33,12 @@ class PicturesViewModel(
 
     var unsplashResponse: UnsplashResponse? = null
 
+    lateinit var firstVisibleItemPositions : IntArray
+    var currentDetailImagePosition: Int = 0
+
     lateinit var picturesArray: ArrayList<UnsplashResponseItem>
+
+    var rvState: Parcelable? = null
 
     init {
         getPictures()
@@ -111,6 +117,7 @@ class PicturesViewModel(
                 else -> false
             }
         } else {
+            //  It looks like the below are deprecated but they will run fine for phones running Lollipop or lower
             connectivityManager.activeNetworkInfo?.run {
                 return when (type) {
                     ConnectivityManager.TYPE_WIFI -> true

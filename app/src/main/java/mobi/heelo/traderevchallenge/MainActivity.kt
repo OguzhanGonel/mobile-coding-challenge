@@ -12,12 +12,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: PicturesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         val repository = PicturesRepository()
         val viewModelProviderFactory = PicturesViewModelProviderFactory(application, repository)
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(PicturesViewModel::class.java)
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
     }
 }
