@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import mobi.heelo.traderevchallenge.R
 import mobi.heelo.traderevchallenge.models.UnsplashResponseItem
 
@@ -50,11 +51,14 @@ class PicturesAdapter: RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>()
         val photo_item_iv: ImageView = holder.itemView.findViewById<ImageView>(R.id.photo_item_iv)
 
         holder.itemView.apply {
-            Glide.with(this).load(currentPicture.urls.thumb).into(photo_item_iv)
+            Glide.with(this).load(currentPicture.urls.thumb)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(photo_item_iv)
 
             setOnClickListener {
                 onItemClickListener?.let { it(currentPicture, position) }
             }
+
         }
     }
 

@@ -33,12 +33,9 @@ class PicturesViewModel(
 
     var unsplashResponse: UnsplashResponse? = null
 
-    lateinit var firstVisibleItemPositions : IntArray
     var currentDetailImagePosition: Int = 0
 
     lateinit var picturesArray: ArrayList<UnsplashResponseItem>
-
-    var rvState: Parcelable? = null
 
     init {
         getPictures()

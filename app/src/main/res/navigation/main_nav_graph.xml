@@ -8,16 +8,27 @@
         android:id="@+id/picturesFragment"
         android:name="mobi.heelo.traderevchallenge.ui.fragments.PicturesFragment"
         android:label="PicturesFragment">
+
         <action
             android:id="@+id/action_picturesFragment_to_pictureDetailsFragment"
             app:destination="@id/pictureDetailsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="positionValue"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/pictureDetailsFragment"
         android:name="mobi.heelo.traderevchallenge.ui.fragments.PictureDetailsFragment"
-        android:label="PictureDetailsFragment" />
+        android:label="PictureDetailsFragment">
+        <argument
+            android:name="positionValue"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
 </navigation>
