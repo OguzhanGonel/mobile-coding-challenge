@@ -19,6 +19,7 @@ class PicturesAdapter: RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>()
         override fun areItemsTheSame(
             oldItem: UnsplashResponseItem, newItem: UnsplashResponseItem
         ): Boolean {
+            //  since items have unique Ids, its sufficient to just check them
             return oldItem.id == newItem.id
         }
 

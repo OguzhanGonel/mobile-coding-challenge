@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitInstance {
     companion object {
-        //        lazy means we initialize this only once
+
         private val retrofit by lazy {
 
             // logging interceptor
@@ -19,7 +19,7 @@ class RetrofitInstance {
                 .addInterceptor(logging)
                 .build()
 
-            // creates retrofit and says how do we want to convert what is returning
+
             Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
