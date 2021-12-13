@@ -1,6 +1,7 @@
 package mobi.heelo.traderevchallenge.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -16,9 +17,10 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
 
     lateinit var viewModel: PicturesViewModel
 
-    var scrollToPosition = 0
+    var isInitialLoad: Boolean = true
 
-    val args: PictureDetailsFragmentArgs by navArgs()
+    // if I wanted to access the args from the Navigation Component, I would use the below
+//    val args: PictureDetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +32,8 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
         viewPager2.adapter = adapter
         viewPager2.setOffscreenPageLimit(viewModel.picturesArray.size - 1);
 
-        scrollToPosition = args.positionValue
+        //  If I wanted to access the Navigation Components args
+//        val scrollToPosition = args.positionValue
 
         viewPager2.registerOnPageChangeCallback(this@PictureDetailsFragment.pageChanger)
     }
@@ -42,7 +45,12 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
             positionOffsetPixels: Int
         ) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            viewModel.currentDetailImagePosition = position
+            if (!isInitialLoad) {
+                Log.d(TAG, "onPageScrolled: changing")
+                viewModel.currentDetailImagePosition = position
+            }
+            isInitialLoad = false
+            viewModel.shouldScrollRecyclerView = true
         }
     }
 
@@ -50,7 +58,12 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
     override fun onResume() {
         super.onResume()
 
-        viewPager2.postDelayed(Runnable { viewPager2.setCurrentItem(scrollToPosition) }, 100)
+        if (viewPager2 != null) {
+            Log.d(TAG, "___currentDetailImagePosition: " + viewModel.currentDetailImagePosition)
+            viewPager2.postDelayed(Runnable {
+                viewPager2.setCurrentItem(viewModel.currentDetailImagePosition)
+            }, 100)
+        }
     }
 
 }

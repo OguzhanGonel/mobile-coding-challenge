@@ -1,6 +1,7 @@
 package mobi.heelo.traderevchallenge.ui.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import kotlinx.android.synthetic.main.fragment_pictures.*
@@ -27,6 +29,8 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     lateinit var picturesAdapter: PicturesAdapter
     lateinit var staggeredGlManager: StaggeredGridLayoutManager
 
+    val RECYCLER_STATE_KEY = "RECYCLER_STATE"
+
     var isLoading = false
     var isScrolling = false
 
@@ -45,7 +49,7 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     private fun setupRecyclerView() {
         picturesAdapter = PicturesAdapter()
 
-        staggeredGlManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        staggeredGlManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         pictures_rv.apply {
             adapter = picturesAdapter
@@ -55,6 +59,8 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
             itemAnimator = null
             setItemViewCacheSize(20)
         }
+
+
     }
 
     val scrollListener = object : RecyclerView.OnScrollListener() {
@@ -109,17 +115,15 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     private fun setViews() {
         picturesAdapter.setOnItemClickListener { unsplashResponseItem, position ->
 
-            val bundle = Bundle().apply {
-                putInt("positionValue", position)
-            }
+            // If I wanted to send the position as an argument of the Navigation Components
+//            val bundle = Bundle().apply {
+//                putInt("positionValue", position)
+//            }
 
             viewModel.currentDetailImagePosition = position
 
-            Log.d(TAG, "setViews: position: $position")
-
             findNavController().navigate(
                 R.id.action_picturesFragment_to_pictureDetailsFragment,
-                bundle
             )
         }
 
@@ -166,9 +170,25 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     override fun onResume() {
         super.onResume()
 
-        pictures_rv.postDelayed(
-            Runnable { pictures_rv.scrollToPosition(viewModel.currentDetailImagePosition) },
-            100
-        )
+// add a should rotate here
+        if (pictures_rv != null && viewModel.shouldScrollRecyclerView) {
+            viewModel.shouldScrollRecyclerView = false
+            pictures_rv.scrollToPosition(viewModel.currentDetailImagePosition)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (pictures_rv != null) {
+            val layoutManager = pictures_rv.layoutManager as StaggeredGridLayoutManager
+            outState.putParcelable(RECYCLER_STATE_KEY, layoutManager.onSaveInstanceState());
+        }
+
+        super.onSaveInstanceState(outState)
     }
 }

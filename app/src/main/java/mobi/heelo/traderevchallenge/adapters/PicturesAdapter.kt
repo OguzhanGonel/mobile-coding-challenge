@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_picture.view.*
 import mobi.heelo.traderevchallenge.R
 import mobi.heelo.traderevchallenge.models.UnsplashResponseItem
 
-class PicturesAdapter: RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>() {
+class PicturesAdapter : RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>() {
 
     inner class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -50,7 +51,11 @@ class PicturesAdapter: RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>()
         val currentPicture = differ.currentList[position]
 
         holder.itemView.apply {
+
+            val requestOptions: RequestOptions = RequestOptions().placeholder(R.drawable.ic_downloading)
+
             Glide.with(this).load(currentPicture.urls.thumb)
+                .apply(requestOptions)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(photo_item_iv)
 

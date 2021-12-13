@@ -6,6 +6,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -29,10 +31,9 @@ class PicturesViewModel(
     //  the UnsplashResponse is wrapped with the custom Resource class I made for api responses
     val picturesLiveData: MutableLiveData<Resource<UnsplashResponse>> = MutableLiveData()
     var apiPageNumber = 1
-
     var unsplashResponse: UnsplashResponse? = null
-
     var currentDetailImagePosition: Int = 0
+    var shouldScrollRecyclerView : Boolean = false
 
     lateinit var picturesArray: ArrayList<UnsplashResponseItem>
 
@@ -113,7 +114,7 @@ class PicturesViewModel(
                 else -> false
             }
         } else {
-            //  It looks like the below are deprecated but they will run fine for phones running Lollipop or lower
+            //  This looks like the below is deprecated but it will run fine for phones running Lollipop or lower
             connectivityManager.activeNetworkInfo?.run {
                 return when (type) {
                     ConnectivityManager.TYPE_WIFI -> true

@@ -29,6 +29,7 @@ class ViewPagerAdapter(
         val currentPicture = pictures[position]
 
         holder.itemView.apply {
+
             Glide.with(context).load(currentPicture.urls.thumb).into(photo_detail_item_iv)
             photo_detail_item_iv.contentDescription = currentPicture.description
 
