@@ -4,11 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.item_picture_detail.view.*
 import mobi.heelo.traderevchallenge.R
 import mobi.heelo.traderevchallenge.models.UnsplashResponseItem
 
@@ -30,10 +28,16 @@ class ViewPagerAdapter(
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
         val currentPicture = pictures[position]
 
-        val photo_detail_item_iv: ImageView =
-            holder.itemView.findViewById<ImageView>(R.id.photo_detail_item_iv)
+        holder.itemView.apply {
+            Glide.with(context).load(currentPicture.urls.thumb).into(photo_detail_item_iv)
+            photo_detail_item_iv.contentDescription = currentPicture.description
 
-        Glide.with(context).load(currentPicture.urls.thumb).into(photo_detail_item_iv)
+            Glide.with(context).load(currentPicture.user.profile_image.medium)
+                .into(user_profile_image_iv)
+            user_name_tv.text = currentPicture.user.name
+            user_username_tv.text = "@".plus(currentPicture.user.username)
+            number_of_likes_tv.text = currentPicture.likes.toString()
+        }
     }
 
     override fun getItemCount(): Int {

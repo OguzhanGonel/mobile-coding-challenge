@@ -162,4 +162,14 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
         pagination_pb.visibility = View.VISIBLE
         isLoading = true
     }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        pictures_rv.postDelayed(
+            Runnable { pictures_rv.scrollToPosition(viewModel.currentDetailImagePosition) },
+            100
+        )
+    }
 }
