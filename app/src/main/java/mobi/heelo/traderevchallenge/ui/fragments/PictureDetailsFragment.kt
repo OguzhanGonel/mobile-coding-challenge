@@ -13,7 +13,6 @@ import mobi.heelo.traderevchallenge.adapters.ViewPagerAdapter
 import mobi.heelo.traderevchallenge.viewmodels.PicturesViewModel
 
 class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
-    val TAG = "PictureDetailsFragment"
 
     lateinit var viewModel: PicturesViewModel
 
@@ -46,7 +45,6 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
         ) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             if (!isInitialLoad) {
-                Log.d(TAG, "onPageScrolled: changing")
                 viewModel.currentDetailImagePosition = position
             }
             isInitialLoad = false
@@ -59,7 +57,6 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
         super.onResume()
 
         if (viewPager2 != null) {
-            Log.d(TAG, "___currentDetailImagePosition: " + viewModel.currentDetailImagePosition)
             viewPager2.postDelayed(Runnable {
                 viewPager2.setCurrentItem(viewModel.currentDetailImagePosition)
             }, 100)

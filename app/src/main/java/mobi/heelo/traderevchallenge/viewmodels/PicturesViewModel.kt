@@ -26,14 +26,12 @@ class PicturesViewModel(
     val picturesRepository: PicturesRepository
 ) : AndroidViewModel(app) {
 
-    val TAG = "PicturesViewModel"
-
     //  the UnsplashResponse is wrapped with the custom Resource class I made for api responses
     val picturesLiveData: MutableLiveData<Resource<UnsplashResponse>> = MutableLiveData()
     var apiPageNumber = 1
     var unsplashResponse: UnsplashResponse? = null
     var currentDetailImagePosition: Int = 0
-    var shouldScrollRecyclerView : Boolean = false
+    var shouldScrollRecyclerView: Boolean = false
 
     lateinit var picturesArray: ArrayList<UnsplashResponseItem>
 
@@ -80,17 +78,9 @@ class PicturesViewModel(
         } catch (t: Throwable) {
             when (t) {
                 is IOException -> {
-                    Log.d(
-                        TAG,
-                        "IOException for network failure occured inside safeUnsplashApiCall"
-                    )
                     picturesLiveData.postValue(Resource.Error("Sorry, network failure"))
                 }
                 else -> {
-                    Log.d(
-                        TAG,
-                        "conversion error occured inside safeUnsplashApiCall"
-                    )
                     picturesLiveData.postValue(Resource.Error("Sorry, something went wrong"))
                 }
             }

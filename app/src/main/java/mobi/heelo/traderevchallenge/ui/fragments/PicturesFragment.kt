@@ -23,13 +23,9 @@ import mobi.heelo.traderevchallenge.viewmodels.PicturesViewModel
 
 class PicturesFragment : Fragment(R.layout.fragment_pictures) {
 
-    val TAG = "PicturesFragment"
-
     lateinit var viewModel: PicturesViewModel
     lateinit var picturesAdapter: PicturesAdapter
     lateinit var staggeredGlManager: StaggeredGridLayoutManager
-
-    val RECYCLER_STATE_KEY = "RECYCLER_STATE"
 
     var isLoading = false
     var isScrolling = false
@@ -140,7 +136,6 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Log.e(TAG, "Error occured: $message")
                         Toast.makeText(
                             activity,
                             "Sorry, an error occured: $message",
@@ -170,25 +165,9 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     override fun onResume() {
         super.onResume()
 
-// add a should rotate here
         if (pictures_rv != null && viewModel.shouldScrollRecyclerView) {
             viewModel.shouldScrollRecyclerView = false
             pictures_rv.scrollToPosition(viewModel.currentDetailImagePosition)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        if (pictures_rv != null) {
-            val layoutManager = pictures_rv.layoutManager as StaggeredGridLayoutManager
-            outState.putParcelable(RECYCLER_STATE_KEY, layoutManager.onSaveInstanceState());
-        }
-
-        super.onSaveInstanceState(outState)
     }
 }
