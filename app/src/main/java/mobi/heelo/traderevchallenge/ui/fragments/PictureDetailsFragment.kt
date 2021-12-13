@@ -46,7 +46,6 @@ class PictureDetailsFragment : Fragment(R.layout.fragment_picture_detail) {
             positionOffsetPixels: Int
         ) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            Log.d(TAG, "onPageScrolled: position: $position")
             viewModel.currentDetailImagePosition = position
         }
     }

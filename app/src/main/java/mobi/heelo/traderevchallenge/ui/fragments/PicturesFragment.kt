@@ -3,6 +3,7 @@ package mobi.heelo.traderevchallenge.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_pictures.*
 import mobi.heelo.traderevchallenge.MainActivity
 import mobi.heelo.traderevchallenge.R
 import mobi.heelo.traderevchallenge.adapters.PicturesAdapter
+import mobi.heelo.traderevchallenge.utilities.Constants.Companion.QUERY_PAGE_SIZE
 import mobi.heelo.traderevchallenge.utilities.Resource
 import mobi.heelo.traderevchallenge.viewmodels.PicturesViewModel
 
@@ -26,6 +28,8 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
     lateinit var picturesAdapter: PicturesAdapter
     lateinit var staggeredGlManager: StaggeredGridLayoutManager
 
+    var isLoading = false
+    var isScrolling = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,29 +58,51 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
         }
     }
 
-    fun getLastVisibleItem(lastVisibleItemPositions: IntArray): Int {
-        var maxSize = 0
-        for (i in lastVisibleItemPositions.indices) {
-            if (i == 0) {
-                maxSize = lastVisibleItemPositions[i]
-            } else if (lastVisibleItemPositions[i] > maxSize) {
-                maxSize = lastVisibleItemPositions[i]
-            }
-        }
-        return maxSize
-    }
-
-
-
     val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            // I will implement the logic for infinite scrolling later
+
+            // checks if we are currently scrolling
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
+            }
+        }
+
+        private fun getFirstVisibleItem(firstVisibleItemPositions: IntArray): Int {
+            var minSize = 0
+            if (firstVisibleItemPositions.size > 0) {
+                minSize = firstVisibleItemPositions[0]
+                for (position in firstVisibleItemPositions) {
+                    if (position < minSize) {
+                        minSize = position
+                    }
+                }
+            }
+            return minSize
         }
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            // I will implement the logic for infinite scrolling later
+
+            val firstVisibleItemPositions =
+                (staggeredGlManager as StaggeredGridLayoutManager).findFirstVisibleItemPositions(
+                    null
+                )
+            var firstVisibleItem = getFirstVisibleItem(firstVisibleItemPositions)
+
+            val visibleItemCount = staggeredGlManager.childCount
+            val totalItemCount = staggeredGlManager.itemCount
+
+            val isLastItem = firstVisibleItem + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItem >= 0
+            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+            val shouldPaginate =
+                !isLoading && isLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+
+            if (shouldPaginate) {
+                viewModel.getPictures()
+                isScrolling = false
+            }
 
         }
     }
@@ -89,6 +115,8 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
             }
 
             viewModel.currentDetailImagePosition = position
+
+            Log.d(TAG, "setViews: position: $position")
 
             findNavController().navigate(
                 R.id.action_picturesFragment_to_pictureDetailsFragment,
@@ -127,11 +155,11 @@ class PicturesFragment : Fragment(R.layout.fragment_pictures) {
 
     private fun hideProgressBar() {
         pagination_pb.visibility = View.INVISIBLE
+        isLoading = false
     }
 
     private fun showProgressBar() {
         pagination_pb.visibility = View.VISIBLE
+        isLoading = true
     }
-
-
 }
